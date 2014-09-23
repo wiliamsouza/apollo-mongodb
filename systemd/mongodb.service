@@ -1,0 +1,21 @@
+[Unit]
+Description=apollo-mongodb
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=/etc/environment
+EnvironmentFile=/etc/env.d/apollo
+TimeoutStartSec=0
+ExecStartPre=/usr/bin/docker pull wiliamsouza/docker-mongodb
+ExecStart=/usr/bin/docker run --name mongodb-%i --rm -p 27017:27017 -v /srv/containers/mongodb/volumes/log:/var/log/mongodb -v /srv/containers/mongodb/volumes/lib:/var/lib/mongodb -v /srv/containers/mongodb/volumes/etc:/etc/mongodb wiliamsouza/docker-mongodb
+ExecStartPost=/usr/bin/etcdctl set /apollo/mongodb/%i ${COREOS_PUBLIC_IPV4}
+ExecStartPost=/usr/bin/etcdctl set /apollo/environment ${APOLLO_ENVIRONMENT}
+ExecStop=/usr/bin/docker stop mongodb-%i
+ExecStopPost=/usr/bin/etcdctl rm /apollo/mongodb/%i
+
+[Install]
+WantedBy=multi-user.target
+
+[X-Fleet]
+X-Conflicts=mongodb-*.service
