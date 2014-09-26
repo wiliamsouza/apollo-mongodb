@@ -1,0 +1,3 @@
+{{ range $conf := .apollo_mongodb_mongod_conf }}
+{{ $conf.Key }}={{ $conf.Value }}
+{{ end }}

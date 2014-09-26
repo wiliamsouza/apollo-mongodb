@@ -1,0 +1,7 @@
+[template]
+src   = "mongod.tmpl"
+dest  = "/etc/mongodb/mongod.conf"
+owner = "mongodb"
+group = "mongodb"
+mode  = "0755"
+keys = ["/apollo/mongodb/mongod/conf"]

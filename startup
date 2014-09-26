@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+# Remove unused mongod configuration
+if [ ! -s /etc/mongod.conf ]; then
+    rm /etc/mongod.conf
+fi
+
+if ! grep -q mongodb /etc/passwd; then
+    adduser --system --no-create-home mongodb
+    addgroup --system mongodb
+    adduser mongodb mongodb
+fi
+
+if [ ! -d /var/lib/mongodb ]; then
+    mkdir -p /var/lib/mongodb
+    chown -R mongodb:mongodb /var/lib/mongodb
+fi
+
+if [ ! -d /var/log/mongodb ]; then
+    mkdir -p /var/log/mongodb
+    chown -R mongodb:mongodb /var/log/mongodb
+fi
+
+if [ ! -d /var/run/mongodb ]; then
+    mkdir -p /var/run/mongodb
+    chown -R mongodb:mongodb /var/run/mongodb
+fi
+
+chown -R mongodb:mongodb /etc/mongodb
+
+exec supervisord
