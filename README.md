@@ -6,14 +6,41 @@ Docker mongodb server generic image source. This is based on `ubuntu:14.04` imag
 Starting service
 ----------------
 
-Start the service on the cluster:
+Start the `mongodb` service on the cluster:
 
 ```
 cd systemd
 ln -s mongodb.service mongodb@1.service
+ln -s mongodb.service mongodb@2.service
+ln -s mongodb.service mongodb@3.service
 fleetctl start mongodb@1.service
+fleetctl start mongodb@2.service
+fleetctl start mongodb@3.service
 ```
+
+```
+$ fleetctl list-units
+UNIT                    MACHINE                         ACTIVE          SUB
+mongodb@1.service       01a8d069.../172.16.16.103       inactive        dead
+mongodb@2.service       01a8d069.../172.16.16.103       inactive        dead
+mongodb@3.service       01a8d069.../172.16.16.103       inactive        dead
+```
+
+```
+fleetctl start mongodb@1.service
+fleetctl start mongodb@2.service
+fleetctl start mongodb@3.service
+```
+
 Info about how to configure fleet `apollo-coreos/README.md#fleet`.
+
+
+Volumes:
+
+```
+mkdir -p ~/.containers/apollo/mongodb
+cp -R volumes/ ~/.containers/apollo/mongodb/
+```
 
 Container
 ---------
