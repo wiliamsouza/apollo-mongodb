@@ -1,5 +1,5 @@
 mongodb:
-  image: wiliamsouza/docker-mongodb
+  build: .
   ports:
     - "27017:27017"
   volumes:
