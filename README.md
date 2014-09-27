@@ -1,12 +1,61 @@
 apollo-mongodb
---------------
+==============
 
 Docker mongodb server generic image source. This is based on `ubuntu:14.04` image.
+
+Environment
+-----------
+
+Set the environment you are working on.
+
+```
+export APOLLO_ENVIRONMENT=local
+export APOLLO_TAG=$APOLLO_ENVIRONMENT
+export DOCKER_REGISTRY="${APOLLO_ENVIRONMENT}.registry.apollolab.com.br:5000"
+```
+
+Volumes
+-------
+
+```
+mkdir -p ~/.containers/apollo/mongodb
+cp -R volumes/ ~/.containers/apollo/mongodb/
+```
+
+Image
+-----
+
+Build this image:
+
+```
+docker build -t $DOCKER_REGISTRY/apollo/mongodb:$APOLLO_TAG .
+```
+
+Pushing images
+--------------
+
+Push a image manually, this will preload the image to the cluster node:
+
+```
+IMAGE="${DOCKER_REGISTRY}/apollo/mongodb"
+COREOS_IP=172.16.16.101
+docker save $IMAGE | docker -H tcp://$COREOS_IP:2375 load
+```
+
+Push the image to local registry:
+
+```
+docker push $IMAGE:$APOLLO_TAG
+```
+
+Before push an image you need start a local registry `apollo-registry/README.md`
+for instruction how to start a registry.
+
 
 Starting service
 ----------------
 
-Start the `mongodb` service on the cluster:
+Start `mongodb` service on the cluster:
 
 ```
 cd systemd
@@ -18,32 +67,17 @@ fleetctl start mongodb@2.service
 fleetctl start mongodb@3.service
 ```
 
-```
-$ fleetctl list-units
-UNIT                    MACHINE                         ACTIVE          SUB
-mongodb@1.service       01a8d069.../172.16.16.103       inactive        dead
-mongodb@2.service       01a8d069.../172.16.16.103       inactive        dead
-mongodb@3.service       01a8d069.../172.16.16.103       inactive        dead
-```
-
-```
-fleetctl start mongodb@1.service
-fleetctl start mongodb@2.service
-fleetctl start mongodb@3.service
-```
-
 Info about how to configure fleet `apollo-coreos/README.md#fleet`.
-
-
-Volumes:
-
-```
-mkdir -p ~/.containers/apollo/mongodb
-cp -R volumes/ ~/.containers/apollo/mongodb/
-```
 
 Container
 ---------
+
+The commands here should be executed inside a cluster node.
+
+```
+eval `cat /etc/environment`
+eval `cat /etc/env.d/apollo`
+```
 
 This image uses volumes and environment variables to control the mongodb server
 configuration.
@@ -55,28 +89,27 @@ Volumes:
 * `/var/log/mongodb`: Access log from the container using it.
 
 You pass with `-v` docker option. Don't forget to use absolute path here.
-
 Shell access:
 
 ```
-$ docker.io run -p 27017:27017 -i \
--v `pwd`/volumes/log:/var/log/mongodb \
--v `pwd`/volumes/lib:/var/lib/mongodb \
--v `pwd`/volumes/etc:/etc/mongodb \
--t wiliamsouza/mongodb /bin/bash
+docker run --rm -p 80:80 -i \
+-v /srv/containers/mongodb/volumes/log:/var/log/mongodb \
+-v /srv/containers/mongodb/volumes/lib:/var/lib/mongodb \
+-v /srv/containers/mongodb/volumes/etc:/etc/mongodb \
+-t $DOCKER_REGISTRY/apollo/mongodb:$APOLLO_ENVIRONMENT /bin/bash
 ```
 
 The command above will start a container give you a shell. Don't
 forget to start the service running the `startup &` script.
 
-Usage:
+Manual start:
 
 ```
-$ docker.io run --name mongodb -p 27017:27017 -d \
--v `pwd`/volumes/log:/var/log/mongodb \
--v `pwd`/volumes/lib:/var/lib/mongodb \
--v `pwd`/volumes/etc:/etc/mongodb \
--t wiliamsouza/mongodb
+docker run --name nginx -p 80:80 \
+-v /srv/containers/mongodb/volumes/log:/var/log/mongodb \
+-v /srv/containers/mongodb/volumes/lib:/var/lib/mongodb \
+-v /srv/containers/mongodb/volumes/etc:/etc/mongodb \
+-d $DOCKER_REGISTRY/apollo/mongodb:$APOLLO_ENVIRONMENT
 ```
 
 The command above will start a container and return its ID.
