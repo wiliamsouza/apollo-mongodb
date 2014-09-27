@@ -8,6 +8,11 @@ Environment
 
 Before run see [apollo-coreos](https://github.com/wiliamsouza/apollo-coreos#environment) for instructions.
 
+```
+IMAGE="${DOCKER_REGISTRY}/apollo/mongodb"
+COREOS_IP=172.16.16.101
+```
+
 Volumes
 -------
 
@@ -31,8 +36,6 @@ Pushing images
 Push a image manually, this will preload the image to the cluster node:
 
 ```
-IMAGE="${DOCKER_REGISTRY}/apollo/mongodb"
-COREOS_IP=172.16.16.101
 docker save $IMAGE | docker -H tcp://$COREOS_IP:2375 load
 ```
 
