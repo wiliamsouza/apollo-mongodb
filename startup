@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+etcd=${COREOS_IP}:4001
+
 # Remove unused mongod configuration
 if [ ! -s /etc/mongod.conf ]; then
     rm /etc/mongod.conf

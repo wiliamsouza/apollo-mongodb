@@ -7,8 +7,8 @@ After=docker.service
 EnvironmentFile=/etc/environment
 EnvironmentFile=/etc/env.d/apollo
 TimeoutStartSec=0
-ExecStartPre=/usr/bin/docker pull wiliamsouza/docker-mongodb
-ExecStart=/usr/bin/docker run --name mongodb-%i --rm -p 27017:27017 -v /srv/containers/mongodb/volumes/log:/var/log/mongodb -v /srv/containers/mongodb/volumes/lib:/var/lib/mongodb -v /srv/containers/mongodb/volumes/etc:/etc/mongodb wiliamsouza/docker-mongodb
+ExecStartPre=/usr/bin/docker pull ${DOCKER_REGISTRY}/apollo/mongodb:${APOLLO_ENVIRONMENT}
+ExecStart=/usr/bin/docker run --name mongodb-%i --rm -p 27017:27017 -e COREOS_IP=${COREOS_PUBLIC_IPV4} -v /srv/containers/mongodb/volumes/log:/var/log/mongodb -v /srv/containers/mongodb/volumes/lib:/var/lib/mongodb -v /srv/containers/mongodb/volumes/etc:/etc/mongodb ${DOCKER_REGISTRY}/apollo/mongodb:${APOLLO_ENVIRONMENT}
 ExecStartPost=/usr/bin/etcdctl set /apollo/mongodb/%i ${COREOS_PUBLIC_IPV4}:27017
 ExecStartPost=/usr/bin/etcdctl set /apollo/environment ${APOLLO_ENVIRONMENT}
 ExecStop=/usr/bin/docker stop mongodb-%i
