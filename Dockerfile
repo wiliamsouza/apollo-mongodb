@@ -40,7 +40,7 @@ RUN echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen
 RUN apt-get update
 
 # confd binary
-RUN curl -L https://github.com/kelseyhightower/confd/releases/download/v0.5.0/confd-0.5.0-darwin-amd64 -o /usr/local/bin/confd
+RUN curl -L https://github.com/kelseyhightower/confd/releases/download/v0.5.0/confd-0.5.0-linux-amd64 -o /usr/local/bin/confd
 RUN chmod +x /usr/local/bin/confd
 
 # confd configuration
