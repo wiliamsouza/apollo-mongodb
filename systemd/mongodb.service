@@ -18,4 +18,4 @@ ExecStopPost=/usr/bin/etcdctl rm /apollo/mongodb/%i
 WantedBy=multi-user.target
 
 [X-Fleet]
-Conflicts=mongodb@*.service
+Conflicts=mongodb*
